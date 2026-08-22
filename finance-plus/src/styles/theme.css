@@ -10,7 +10,7 @@
         --border: #e8e5de;
         --muted-primary: rgba(73, 123, 13, 0.2);
         --muted-foreground: #6f6f6f;
-        --input: #f5f2ec;
+        --input: #fcfbf8;
         --skeleton-base-color: #e8e5de;
         --skeleton-highlight-color: #f5f2ec;
     }
@@ -25,7 +25,7 @@
         --border: #3f3f46;
         --muted-primary: rgba(146, 92, 240, 0.2);
         --muted-foreground: #b3b3bd;
-        --input: #1e1e1e;
+        --input: #121212;
         --skeleton-base-color: #3f3f46;
         --skeleton-highlight-color: #52525b;
     }

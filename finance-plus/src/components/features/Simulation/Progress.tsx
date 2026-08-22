@@ -57,7 +57,7 @@ export function StepProgress({ currentStep }: StepProgressProps) {
     };
 
     return (
-        <div className="flex w-fit px-2.5 py-2.5">
+        <div className="flex px-2.5 py-2.5">
             {renderStepsBlocks(steps)}
         </div>
     );
