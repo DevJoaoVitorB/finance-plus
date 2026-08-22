@@ -1,23 +1,18 @@
 import { simulationFormSteps } from '@/data/simulation';
+import { useSimulation } from '@/hooks/useSimulation';
 import { FormStep } from './FormStep';
 import { StepProgress } from './Progress';
-import { useState } from 'react';
 
 export function SimulationForm() {
-    const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+    const {
+        simulation: { currentStepIndex, ...simulation },
+        updateField,
+        nextStep,
+        previousStep,
+    } = useSimulation();
     const currentStep = currentStepIndex + 1;
     const stepData = simulationFormSteps[currentStepIndex];
     const maxSteps = simulationFormSteps.length;
-
-    const handleNextStep = () => {
-        if (currentStepIndex + 1 > maxSteps - 1) return;
-        setCurrentStepIndex((prev) => prev + 1);
-    };
-
-    const handlePreviousStep = () => {
-        if (currentStepIndex === 0) return;
-        setCurrentStepIndex((prev) => prev - 1);
-    };
 
     return (
         <div className="flex flex-col items-center justify-center gap-8 w-md sm:w-xl">
@@ -26,8 +21,10 @@ export function SimulationForm() {
                 key={stepData.id}
                 currentStep={currentStep}
                 maxSteps={maxSteps}
-                onNext={handleNextStep}
-                onBack={handlePreviousStep}
+                value={simulation[stepData.id]}
+                onValueChange={(value) => updateField(stepData.id, value)}
+                onNext={nextStep}
+                onBack={previousStep}
                 {...stepData}
             />
         </div>

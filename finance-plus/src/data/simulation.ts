@@ -34,7 +34,7 @@ export const simulationFormSteps: StepProps[] = [
         inputProps: { prefix: 'R$', placeholder: '0,00', maxLength: 12 },
     },
     {
-        id: 'goalDescription',
+        id: 'goalName',
         title: 'Descrição da Meta',
         icon: PencilSparkles,
         question: 'Qual objetivo você deseja alcançar?',

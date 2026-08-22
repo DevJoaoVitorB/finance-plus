@@ -1,11 +1,12 @@
 import { Button } from '@/components/shared/Button';
 import { Input, type InputProps } from '@/components/shared/Input';
 import { currencyMask, integerMask } from '@/utils/currency';
+import type { SimulationField } from '@/context/simulation/types';
 import { ArrowLeft, ArrowRight, type LucideIcon } from 'lucide-react';
-import { useState, type ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 export interface StepProps {
-    id: string;
+    id: SimulationField;
     title: string;
     icon: LucideIcon;
     question: string;
@@ -15,6 +16,8 @@ export interface StepProps {
 interface FormStepProps {
     currentStep: number;
     maxSteps: number;
+    value: string;
+    onValueChange: (value: string) => void;
     onBack: () => void;
     onNext: () => void;
 }
@@ -22,6 +25,8 @@ interface FormStepProps {
 export function FormStep({
     currentStep,
     maxSteps,
+    value,
+    onValueChange,
     onBack,
     onNext,
 
@@ -33,8 +38,6 @@ export function FormStep({
     const firstStep = currentStep === 1;
     const lastStep = currentStep === maxSteps;
 
-    const [inputValue, setInputValue] = useState<string>('');
-
     const handleChange = ({ currentTarget }: ChangeEvent<HTMLInputElement>) => {
         const mask =
             inputProps.prefix === 'R$'
@@ -43,7 +46,7 @@ export function FormStep({
                   ? integerMask
                   : undefined;
 
-        setInputValue(mask?.(currentTarget.value) ?? currentTarget.value);
+        onValueChange(mask?.(currentTarget.value) ?? currentTarget.value);
     };
 
     return (
@@ -63,7 +66,7 @@ export function FormStep({
             >
                 <Input
                     {...inputProps}
-                    value={inputValue}
+                    value={value}
                     onChange={handleChange}
                 />
                 <div className="w-full flex flex-col gap-4 sm:flex-row">
@@ -82,7 +85,7 @@ export function FormStep({
                         rightIcon={!lastStep ? ArrowRight : undefined}
                         variant="primary"
                         onClick={onNext}
-                        disabled={!inputValue}
+                        disabled={!value}
                     >
                         {lastStep ? 'Gerar Simulação' : 'Continuar'}
                     </Button>
