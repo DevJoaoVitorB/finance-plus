@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ButtonHTMLAttributes } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type VariantButton = 'primary' | 'secondary' | 'destructive';
 
@@ -29,7 +30,7 @@ export function Button({
     return (
         <button
             {...props}
-            className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+            className={twMerge(baseClasses, variantClasses[variant], className)}
         >
             {LeftIcon && <LeftIcon size={16} />}
             {children}
