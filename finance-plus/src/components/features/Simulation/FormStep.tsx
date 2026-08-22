@@ -1,7 +1,8 @@
 import { Button } from '@/components/shared/Button';
 import { Input, type InputProps } from '@/components/shared/Input';
+import { currencyMask, integerMask } from '@/utils/currency';
 import { ArrowLeft, ArrowRight, type LucideIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 export interface StepProps {
     id: string;
@@ -34,6 +35,17 @@ export function FormStep({
 
     const [inputValue, setInputValue] = useState<string>('');
 
+    const handleChange = ({ currentTarget }: ChangeEvent<HTMLInputElement>) => {
+        const mask =
+            inputProps.prefix === 'R$'
+                ? currencyMask
+                : inputProps.suffix === 'meses'
+                  ? integerMask
+                  : undefined;
+
+        setInputValue(mask?.(currentTarget.value) ?? currentTarget.value);
+    };
+
     return (
         <section className="bg-card w-full p-4 border border-border rounded-lg shadow-md">
             <div className="flex items-center gap-2 pb-3 border-b border-border">
@@ -52,7 +64,7 @@ export function FormStep({
                 <Input
                     {...inputProps}
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={handleChange}
                 />
                 <div className="w-full flex flex-col gap-4 sm:flex-row">
                     {!firstStep && (
