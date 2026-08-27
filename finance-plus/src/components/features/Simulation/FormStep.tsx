@@ -1,93 +1,62 @@
 import { Button } from '@/components/shared/Button';
-import { Input, type InputProps } from '@/components/shared/Input';
-import { currencyMask, integerMask } from '@/utils/currency';
-import type { SimulationField } from '@/context/simulation/types';
-import { ArrowLeft, ArrowRight, type LucideIcon } from 'lucide-react';
-import type { ChangeEvent } from 'react';
-
-export interface StepProps {
-    id: SimulationField;
-    title: string;
-    icon: LucideIcon;
-    question: string;
-    inputProps: InputProps;
-}
+import { Input } from '@/components/shared/Input';
+import type { SimulationStep } from '@/data/simulation';
+import { formatStepValue, isStepValueValid } from '@/utils/simulation';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import type { ChangeEvent, SubmitEvent } from 'react';
 
 interface FormStepProps {
-    currentStep: number;
-    maxSteps: number;
+    step: SimulationStep;
     value: string;
     onValueChange: (value: string) => void;
     onBack: () => void;
-    onNext: () => void;
+    onSubmit: () => void;
+    isFirstStep: boolean;
+    isLastStep: boolean;
 }
 
-export function FormStep({
-    currentStep,
-    maxSteps,
-    value,
-    onValueChange,
-    onBack,
-    onNext,
-
-    title,
-    icon: Icon,
-    question,
-    inputProps,
-}: FormStepProps & StepProps) {
-    const firstStep = currentStep === 1;
-    const lastStep = currentStep === maxSteps;
+export function FormStep({ step, value, onValueChange, onBack, onSubmit, isFirstStep, isLastStep }: FormStepProps) {
+    const inputId = `simulation-${step.field}`;
+    const isValid = isStepValueValid(step, value);
 
     const handleChange = ({ currentTarget }: ChangeEvent<HTMLInputElement>) => {
-        const mask =
-            inputProps.prefix === 'R$'
-                ? currencyMask
-                : inputProps.suffix === 'meses'
-                  ? integerMask
-                  : undefined;
+        onValueChange(formatStepValue(step.format, currentTarget.value));
+    };
 
-        onValueChange(mask?.(currentTarget.value) ?? currentTarget.value);
+    const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (isValid) onSubmit();
     };
 
     return (
         <section className="bg-card w-full p-4 border border-border rounded-lg shadow-md">
             <div className="flex items-center gap-2 pb-3 border-b border-border">
-                <Icon className="text-primary size-5 sm:size-6" />
-                <h2 className="text-foreground font-normal text-sm sm:text-base">
-                    {title}
-                </h2>
+                <step.icon className="text-primary size-5 sm:size-6" aria-hidden />
+                <h2 className="text-foreground font-normal text-sm sm:text-base">{step.title}</h2>
             </div>
-            <p className="pt-3 pb-8 text-foreground text-lg sm:text-2xl font-normal leading-snug">
-                {question}
-            </p>
-            <form
-                onSubmit={(e) => e.preventDefault()}
-                className="flex flex-col gap-4"
-            >
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <label htmlFor={inputId} className="pt-3 pb-4 text-foreground text-lg sm:text-2xl font-normal leading-snug">
+                    {step.question}
+                </label>
                 <Input
-                    {...inputProps}
+                    id={inputId}
                     value={value}
                     onChange={handleChange}
+                    placeholder={step.placeholder}
+                    prefix={step.format === 'currency' ? 'R$' : undefined}
+                    suffix={step.format === 'integer' ? 'meses' : undefined}
+                    inputMode={step.format === 'text' ? 'text' : 'numeric'}
+                    maxLength={step.format === 'integer' ? 4 : 12}
+                    aria-invalid={!isValid && value.length > 0}
                 />
                 <div className="w-full flex flex-col gap-4 sm:flex-row">
-                    {!firstStep && (
-                        <Button
-                            className="w-full order-2 sm:order-1"
-                            leftIcon={ArrowLeft}
-                            variant="secondary"
-                            onClick={onBack}
-                        >
+                    {!isFirstStep && (
+                        <Button type="button" className="w-full order-2 sm:order-1" leftIcon={ArrowLeft} variant="secondary" onClick={onBack}>
                             Voltar
                         </Button>
                     )}
-                    <Button
-                        className="w-full order-1 sm:order-2"
-                        rightIcon={!lastStep ? ArrowRight : undefined}
-                        variant="primary"
-                        onClick={onNext}
-                        disabled={!value}
-                    >
-                        {lastStep ? 'Gerar Simulação' : 'Continuar'}
+                    <Button type="submit" className="w-full order-1 sm:order-2" rightIcon={!isLastStep ? ArrowRight : undefined} variant="primary" disabled={!isValid}>
+                        {isLastStep ? 'Gerar Simulação' : 'Continuar'}
                     </Button>
                 </div>
             </form>

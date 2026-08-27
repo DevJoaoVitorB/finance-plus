@@ -1,4 +1,4 @@
-import type { StepProps } from '@/components/features/Simulation/FormStep';
+import type { SimulationField } from '@/context/simulation/SimulationContext';
 import {
     BanknoteArrowDown,
     BanknoteArrowUp,
@@ -6,56 +6,70 @@ import {
     Landmark,
     PencilSparkles,
     Target,
+    type LucideIcon,
 } from 'lucide-react';
 
-export const simulationFormSteps: StepProps[] = [
+export type StepFormat = 'currency' | 'integer' | 'text';
+
+export interface SimulationStep {
+    field: SimulationField;
+    title: string;
+    icon: LucideIcon;
+    question: string;
+    format: StepFormat;
+    placeholder: string;
+}
+
+export const simulationSteps: readonly SimulationStep[] = [
     {
-        id: 'income',
+        field: 'income',
         title: 'Renda Mensal',
         icon: BanknoteArrowDown,
         question:
             'Quanto é depositado em sua conta todo mês (somando todas as fontes de renda)?',
-        inputProps: { prefix: 'R$', placeholder: '0,00', maxLength: 12 },
+        format: 'currency',
+        placeholder: '0,00',
     },
     {
-        id: 'expenses',
+        field: 'expenses',
         title: 'Custos Fixos de Vida',
         icon: BanknoteArrowUp,
         question:
             'Quanto você gasta mensalmente (aluguel, contas, alimentação, etc.)?',
-        inputProps: { prefix: 'R$', placeholder: '0,00', maxLength: 12 },
+        format: 'currency',
+        placeholder: '0,00',
     },
     {
-        id: 'debts',
+        field: 'debts',
         title: 'Dívidas/Parcelas',
         icon: Landmark,
         question:
             'Você tem atualmente algum valor comprometido com parcelas ou empréstimos?',
-        inputProps: { prefix: 'R$', placeholder: '0,00', maxLength: 12 },
+        format: 'currency',
+        placeholder: '0,00',
     },
     {
-        id: 'goalName',
+        field: 'goalName',
         title: 'Descrição da Meta',
         icon: PencilSparkles,
         question: 'Qual objetivo você deseja alcançar?',
-        inputProps: { placeholder: 'Ex.: Viagem para o Japão' },
+        format: 'text',
+        placeholder: 'Ex.: Viagem para o Japão',
     },
     {
-        id: 'goalAmount',
+        field: 'goalAmount',
         title: 'Custo da Meta',
         icon: Target,
         question: 'Quanto custa para realizar esse objetivo?',
-        inputProps: { prefix: 'R$', placeholder: '0,00', maxLength: 12 },
+        format: 'currency',
+        placeholder: '0,00',
     },
     {
-        id: 'goalDeadline',
+        field: 'goalDeadline',
         title: 'Prazo Desejado',
         icon: Calendar,
         question: 'Em quantos meses você deseja atingir esse objetivo?',
-        inputProps: {
-            suffix: 'meses',
-            placeholder: '0',
-            maxLength: 4,
-        },
+        format: 'integer',
+        placeholder: '0',
     },
 ];
